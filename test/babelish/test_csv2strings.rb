@@ -85,4 +85,18 @@ class TestCSV2Strings < Test::Unit::TestCase
     system("rm -rf *.lproj")
   end
 
+  def test_converting_csv_to_dotstrings_with_percent
+    expected_output = String.new(<<-EOS)
+"GREETINGS" = "hello_%@";
+"ANOTHER_STRING" = "ANOTHER_STRING";
+    EOS
+    csv_file = 'test/data/test_data_with_percent.csv'
+    converter = Babelish::CSV2Strings.new(
+                                          csv_file, { 'English' => [:en] },
+                                          default_lang: 'variables')
+    converter.convert
+    result = File.read('en.lproj/Localizable.strings')
+    assert_equal expected_output, result
+    system('rm -rf *.lproj')
+  end
 end
